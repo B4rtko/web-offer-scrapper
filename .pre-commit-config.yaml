@@ -12,6 +12,10 @@ repos:
     rev: 24.8.0
     hooks:
     -   id: black
+-   repo: https://github.com/pycqa/autoflake
+    rev: v2.3.1
+    hooks:
+    -   id: autoflake
 -   repo: https://github.com/pycqa/flake8
     rev: 7.1.1
     hooks:
@@ -31,3 +35,10 @@ repos:
     -   id: poetry-lock
     -   id: poetry-export
     -   id: poetry-install
+-   repo: local
+    hooks:
+    -   id: poetry-add-requirements
+        name: Add requirements.txt after poetry-export
+        language: system
+        entry: git add requirements.txt
+        require_serial: true

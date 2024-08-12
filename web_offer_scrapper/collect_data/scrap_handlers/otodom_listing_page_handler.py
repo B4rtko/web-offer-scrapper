@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from bs4 import BeautifulSoup
 
-from project_utils.logger import get_logger
+from web_offer_scrapper.project_utils.logger import get_logger
 
 from ..scrap_utils import request_url_get_soup
 from .otodom_offer_page_handler import OfferPageHandler

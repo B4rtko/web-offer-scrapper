@@ -4,8 +4,8 @@ from typing import Any, Dict, Optional, Tuple
 
 from bs4 import BeautifulSoup
 
-from collect_data.converters.convert_data import Converter
-from project_utils.logger import get_logger
+from web_offer_scrapper.collect_data.converters.convert_data import Converter
+from web_offer_scrapper.project_utils.logger import get_logger
 
 from ..scrap_utils import request_url, request_url_get_soup
 from .config import offer_fields_config

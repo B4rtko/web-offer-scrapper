@@ -6,7 +6,7 @@ import random
 import requests
 from bs4 import BeautifulSoup
 
-from project_utils.logger import get_logger
+from web_offer_scrapper.project_utils.logger import get_logger
 
 logger = get_logger(__name__)
 

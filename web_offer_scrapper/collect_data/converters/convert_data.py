@@ -4,7 +4,7 @@ from typing import Any, Callable, Dict, Optional, Tuple, Union
 
 from unidecode import unidecode
 
-from collect_data.scrap_handlers.config import offer_fields_config
+from web_offer_scrapper.collect_data.scrap_handlers.config import offer_fields_config
 
 from ..database_utils import config as database_fields_config
 

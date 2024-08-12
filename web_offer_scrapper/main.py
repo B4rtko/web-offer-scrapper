@@ -1,8 +1,8 @@
 from typing import List
 
-from collect_data.scrap_handlers.otodom_listing_page_handler import ListingPageHandler
-from collect_data.scrap_handlers.otodom_offer_page_handler import OfferPageHandler
-from project_utils.logger import get_logger
+from web_offer_scrapper.collect_data.scrap_handlers.otodom_listing_page_handler import ListingPageHandler
+from web_offer_scrapper.collect_data.scrap_handlers.otodom_offer_page_handler import OfferPageHandler
+from web_offer_scrapper.project_utils.logger import get_logger
 
 logger = get_logger(__name__)
 

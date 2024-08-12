@@ -1,0 +1,35 @@
+[tool.poetry]
+name = "web-offer-scrapper"
+version = "0.1.0"
+description = "General scrapper for web offers"
+authors = ["Bartosz Rozycki <rozycki1232@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+poetry-plugin-export = "^1.8.0"
+
+
+[tool.poetry.group.dev.dependencies]
+mypy = "^1.11.1"
+black = "^24.8.0"
+flake8 = "^7.1.1"
+isort = "^5.13.2"
+pytest = "^8.3.2"
+pre-commit = "^3.8.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 120
+
+[tool.flake8]
+exclude = ".git, .mypy_cache, .pytest_cache, build, dist"
+max-line-length = 120
+
+[tool.isort]
+skip = [".gitignore", ".dockerignore"]
+
+[tool.mypy]

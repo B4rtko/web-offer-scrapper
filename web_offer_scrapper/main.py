@@ -7,7 +7,7 @@ from web_offer_scrapper.project_utils.logger import get_logger
 logger = get_logger(__name__)
 
 
-def main():
+def main() -> ListingPageHandler:
     listing_page_handler = ListingPageHandler(page_num_max=None)
     scrap_flag = True
 

@@ -38,7 +38,9 @@ repos:
 -   repo: local
     hooks:
     -   id: poetry-add-requirements
-        name: Add requirements.txt after poetry-export
+        name: Add requirements.txt to git after poetry-export
+        description: poetry-export hook exports requirementx.txt file based on pyproject.toml and this hook automatically adds that change to git
         language: system
-        entry: git add requirements.txt
+        entry: "git add"
         require_serial: true
+        files: "requirements.txt"

@@ -39,7 +39,7 @@ def request_url_get_soup(url: str) -> BeautifulSoup:
     return soup
 
 
-def load_jsons_and_return_csv(base_path: str = os.path.join("data", "tabular")):
+def load_jsons_and_return_csv(base_path: str = os.path.join("data", "tabular")) -> None:
     files = os.listdir(base_path)
     data = []
     for file_name in files:

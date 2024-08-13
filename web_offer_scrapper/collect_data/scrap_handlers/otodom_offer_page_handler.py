@@ -5,9 +5,9 @@ from typing import Any, Dict, Optional, Tuple
 from bs4 import BeautifulSoup
 
 from web_offer_scrapper.collect_data.converters.convert_data import Converter
+from web_offer_scrapper.collect_data.scrap_utils import request_url, request_url_get_soup
 from web_offer_scrapper.project_utils.logger import get_logger
 
-from ..scrap_utils import request_url, request_url_get_soup
 from .config import offer_fields_config
 
 logger = get_logger(__name__)
@@ -79,7 +79,7 @@ class OfferPageHandler:
         file_name = self.url_extension.replace("/", "_") + ".json"
         return base_path, file_name
 
-    def get_image_data_base_path(self):
+    def get_image_data_base_path(self) -> str:
         return os.path.join("data", "images", self.url_extension.replace("/", "_"))
 
     def save_tabular_data(self, to_database: bool = True) -> None:
@@ -128,7 +128,7 @@ class OfferPageHandler:
         self.save_tabular_data(to_database=tabular_to_database)
         self.save_image_data(to_google_drive=image_to_google_drive)
 
-    def _find_in_soup(self, *args) -> Optional[str]:
+    def _find_in_soup(self, *args: Any) -> Optional[str]:
         """
         Method for searching through the soup for given args and returning found value.
         If an AttributeError occurs, it is cought and the None value is being returned.
@@ -137,7 +137,9 @@ class OfferPageHandler:
         :return: Value found with the given bs4 search parameters or None if an error occured during th search
         """
         try:
-            return self.page_soup.find(*args).get_text()
+            result = self.page_soup.find(*args).get_text()
+            assert isinstance(result, str)
+            return result
         except AttributeError:
             logger.warning(f"Error in finding in soup by args={args}.")
             return None

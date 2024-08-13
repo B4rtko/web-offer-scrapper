@@ -1,6 +1,6 @@
 import re
 from functools import wraps
-from typing import Any, Callable, Dict, Optional, Tuple, Union
+from typing import Any, Callable, Dict, Optional, ParamSpec, TypeVar
 
 from unidecode import unidecode
 
@@ -8,48 +8,43 @@ from web_offer_scrapper.collect_data.scrap_handlers.config import offer_fields_c
 
 from ..database_utils import config as database_fields_config
 
+T = TypeVar("T")
+P = ParamSpec("P")
 
-def try_exception(arg: Union[Callable, int]) -> Callable:
+
+def try_exception(arg: int = 1) -> Callable[[Callable[P, T]], Callable[P, T]]:
     """
-    Decorator or decorator factory function for returning desired number of None values in case of any exceptino
+    Decorator factory function for returning desired number of None values in case of any exception
 
     :param arg: number of None values to return - default is 1
-    :raises Exception: when the argument is not a callable nor integer
-    :return: wrapped function that returns normal result if no exceptions occured or tuple with desired
-    number of None values
+    :raises Exception: when the argument is not an integer
+    :return: decorator function that wrapps desired function, so that it returns normal result if no exceptions
+             occured or returns tuple with desired number of None values
     """
     if isinstance(arg, int):
         num_return_nans = arg
-    elif callable(arg):
-        num_return_nans = 1
     else:
-        raise Exception(
-            f"try_exception decorator is meant to be used without argument or with 1 int argument, not {arg}"
-        )
+        raise Exception(f"try_exception decorator is meant to be used with 1 int argument, not {arg}")
 
-    def decorator_func(foo):
-        @wraps(foo)
-        def wrapped_func(*args, **kwargs):
+    def decorator_func(func: Callable[P, T]) -> Callable[P, T]:
+        @wraps(func)
+        def wrapped_func(*args: P.args, **kwargs: P.kwargs) -> T:
             try:
-                return foo(*args, **kwargs)
+                return func(*args, **kwargs)
             except Exception:
                 if num_return_nans == 1:
-                    return None
-                else:
-                    return tuple(None for _ in range(num_return_nans))
+                    return None  # type: ignore[return-value]
+                return tuple(None for _ in range(num_return_nans))  # type: ignore[return-value]
 
         return wrapped_func
 
-    if callable(arg):
-        return decorator_func(arg)
-    else:
-        return decorator_func
+    return decorator_func
 
 
 class Converter:
     dictionary: Dict[str, Any]
 
-    def __init__(self, dictionary: Dict):
+    def __init__(self, dictionary: Dict[str, Any]):
         self.dictionary: Dict[str, Any] = dictionary
         self._converted_dictionary: Dict[str, Any]
         self._converted = False
@@ -64,7 +59,7 @@ class Converter:
             self.convert_all()
         return self._converted_dictionary.copy()
 
-    def convert_all(self) -> Dict:
+    def convert_all(self) -> Dict[str, Any]:
         price_converted = self.convert_price(offer_fields_config.price.data_name)
         address_street, address_estate, address_district, address_city, address_province = self.convert_address()
         surface_converted = self.convert_surface()
@@ -132,7 +127,7 @@ class Converter:
         self._converted = True
         return self.converted_dictionary
 
-    @try_exception
+    @try_exception()
     def replace_polish_char_and_whitespaces(self, text: str) -> Optional[str]:
         text_from_directory = self.dictionary.get(text)
         ascii_text = unidecode(text_from_directory)
@@ -146,7 +141,7 @@ class Converter:
             result_text = None
         return result_text
 
-    @try_exception
+    @try_exception()
     def convert_price(self, feature: str) -> Optional[int]:
         #  Remove spaces and the currency symbol
         price = self.dictionary.get(feature)
@@ -155,7 +150,7 @@ class Converter:
         return int(re.sub(r"[^0-9]", "", price))
 
     @try_exception(5)
-    def convert_address(self) -> Tuple[Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]]:
+    def convert_address(self) -> tuple[str, str, str, str, str] | tuple[None, None, None, None, None]:
         # Divide into separate parts that creates address from the link
         address = self.dictionary.get(offer_fields_config.address.data_name)
         list_of_address_elements = unidecode(address).split(", ")
@@ -169,7 +164,7 @@ class Converter:
 
         return address_street, address_estate, address_district, address_city, address_province
 
-    @try_exception
+    @try_exception()
     def convert_surface(self) -> Optional[float]:
         # Remove unit and convert number to float value
         surface = self.dictionary.get(offer_fields_config.surface.data_name)
@@ -178,7 +173,7 @@ class Converter:
         numeric_text = re.sub(r"[^\d,]", "", surface)
         return float(numeric_text.replace(",", "."))
 
-    @try_exception
+    @try_exception()
     def convert_str_to_number(self, feature: str) -> Optional[int]:
         dict_result = self.dictionary.get(feature)
         assert isinstance(dict_result, str)
@@ -186,7 +181,7 @@ class Converter:
         return int(dict_result)
 
     @try_exception(2)
-    def convert_floor_attribute(self) -> Tuple[Optional[int], Optional[int]]:
+    def convert_floor_attribute(self) -> tuple[int, int] | tuple[None, None]:
         floor = self.dictionary.get(offer_fields_config.floor.data_name)
         assert isinstance(floor, str)
 

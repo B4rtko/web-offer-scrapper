@@ -42,7 +42,7 @@ class OfferTabularFieldsConfig:
     link_id: FieldConfig = FieldConfig(data_name="link_id")
 
     @property
-    def fields_with_html_name(self):
+    def fields_with_html_name(self) -> list[FieldConfig]:
         fields = [getattr(self, i) for i in dir(self) if not i.startswith("_") and i != "fields_with_html_name"]
         fields = [field for field in fields if isinstance(field, FieldConfig) and field.html_name is not None]
         return fields

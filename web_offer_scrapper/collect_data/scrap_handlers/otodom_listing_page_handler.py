@@ -1,5 +1,6 @@
 from typing import List, Optional
 
+import bs4
 from bs4 import BeautifulSoup
 
 from web_offer_scrapper.project_utils.logger import get_logger
@@ -164,12 +165,13 @@ class ListingPageHandler:
         """
         logger.info("Getting offer links from the ListingPageHandler current page's soup..")
         try:
+            links: bs4.element.ResultSet
             links = soup.find("div", {"data-cy": "search.listing.organic"}).find_all(
                 "a", {"data-cy": "listing-item-link"}
             )
-            links = [link["href"] for link in links]
-            logger.info(f"Success getting offer links. Offer count is {len(links)}.")
-            return links
+            links_extracted = [link["href"] for link in links]
+            logger.info(f"Success getting offer links. Offer count is {len(links_extracted)}.")
+            return links_extracted
         except Exception:
             logger.error("Error getting offer links - returning empty list.")
             return []
